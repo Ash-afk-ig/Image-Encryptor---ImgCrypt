@@ -1,407 +1,289 @@
-11 i) 
- 
-import java.util.*; 
- 
-public class MaxProductSubarray { 
-    public static void main(String[] args) { 
-        Scanner sc = new Scanner(System.in); 
-         
-        if (sc.hasNextLine()) { 
-            String line = sc.nextLine(); 
-            try { 
-                String[] parts = line.trim().split("\\s+"); 
-                double[] nums = new double[parts.length]; 
-                for (int i = 0; i < parts.length; i++) { 
-                    nums[i] = Double.parseDouble(parts[i]); 
-                } 
- 
-                double max = nums[0], min = nums[0], res = nums[0]; 
-                for (int i = 1; i < nums.length; i++) { 
-                    double n = nums[i]; 
-                    double temp = Math.max(n, Math.max(max * n, min * n)); 
-                    min = Math.min(n, Math.min(max * n, min * n)); 
-                    max = temp; 
-                    res = Math.max(res, max); 
-                } 
- 
-                System.out.printf("%.2f\n", res); 
-            } catch (NumberFormatException e) {  
-                System.out.println("Invalid Input"); 
-            } 
-        } else { 
-            System.out.println("No input provided.");  
-        } 
-        sc.close();  
-    } 
-} 
- 
- 
- 
-14. i) 
-import java.util.*; 
- 
-public class CloseStrings { 
-    public static void main(String[] args) { 
-        Scanner sc = new Scanner(System.in); 
- 
-        if (!sc.hasNextLine()) { 
-            System.out.println("Invalid Input"); 
-            return; 
-        } 
-        String s1 = sc.nextLine(); 
- 
-        if (!sc.hasNextLine()) { 
-            System.out.println("Invalid Input"); 
-            return; 
-        } 
-        String s2 = sc.nextLine(); 
- 
-        if (s1.length() != s2.length()) { 
-            System.out.println("false"); 
-            return; 
-        } 
- 
-        int[] a = new int[26], b = new int[26]; 
-        for (char c : s1.toCharArray()) a[c - 'A']++; 
-        for (char c : s2.toCharArray()) b[c - 'A']++; 
- 
-        for (int i = 0; i < 26; i++) { 
-            if ((a[i] > 0) != (b[i] > 0)) { 
-                System.out.println("false"); 
-                return; 
-            } 
-        } 
- 
-        List<Integer> l1 = new ArrayList<>(), l2 = new ArrayList<>(); 
-        for (int i = 0; i < 26; i++) { 
-            if (a[i] > 0) l1.add(a[i]); 
-            if (b[i] > 0) l2.add(b[i]); 
-        } 
- 
-        Collections.sort(l1); 
-        Collections.sort(l2); 
-        System.out.println(l1.equals(l2)); 
-    } 
-} 
- 
- 
- 
- 
- 
-16   .i) 
-import java.util.*; 
- 
-class Bank { 
-    private double balance; 
-    public Bank(double bal) { balance = bal; } 
- 
-    public synchronized void deposit(double amt) { balance += amt; } 
-    public synchronized void withdraw(double amt) { 
-        if (amt <= balance) balance -= amt; 
-    } 
-    public double getBalance() { return balance; } 
-} 
- 
-class Task implements Runnable { 
-    Bank acc; 
-    Task(Bank acc) { this.acc = acc; } 
-    public void run() { 
-        acc.deposit(500); 
-        acc.withdraw(200); 
-    } 
-} 
- 
-public class Main { 
-    public static void main(String[] args) throws InterruptedException { 
-        Bank acc1 = new Bank(1000); 
-        Thread t1 = new Thread(new Task(acc1)); 
-        Thread t2 = new Thread(new Task(acc1)); 
-        t1.start(); t2.start(); 
-        t1.join(); t2.join(); 
-        System.out.println("Final: " + acc1.getBalance()); 
-    } 
-} 
+Question:  11  i)
+
+CREATE TABLE EmployeeProjects (
+EmployeeID INT,
+EmployeeName VARCHAR(50),
+ProjectName VARCHAR(50)
+);
+
+INSERT INTO EmployeeProjects  VALUES (101, 'Alice', 'ProjectA');
+INSERT INTO EmployeeProjects  VALUES (101, 'Alice', 'ProjectB');
+INSERT INTO EmployeeProjects  VALUES (101, 'Alice', 'ProjectC');
+INSERT INTO EmployeeProjects  VALUES (102, 'Bob', 'ProjectD');
+INSERT INTO EmployeeProjects  VALUES (103, 'Charlie', 'ProjectE');
+INSERT INTO EmployeeProjects  VALUES (103, 'Charlie', 'ProjectF');
+INSERT INTO EmployeeProjects  VALUES (104, 'David', 'ProjectG');
+INSERT INTO EmployeeProjects  VALUES (104, 'David', 'ProjectH');
+INSERT INTO EmployeeProjects  VALUES (104, 'David', 'ProjectI');
+INSERT INTO EmployeeProjects  VALUES (104, 'David', 'ProjectJ');
+
+select * from EmployeeProjects;
+
+Question 11 ii)
+
+CREATE TABLE Orders (
+OrderID INT,
+CustomerName VARCHAR(50),
+OrderDate DATE,
+TotalAmount DECIMAL(10, 2)
+);
+
+CREATE TABLE OrderItems (
+OrderID INT,
+ItemName VARCHAR(50)
+);
+
+
+INSERT INTO Orders VALUES (1, 'Alice', '2024-04-01', 250.00);
+INSERT INTO Orders VALUES (2, 'Bob', '2024-04-02', 100.00);
+INSERT INTO Orders VALUES (3, 'Charlie', '2024-04-03', 60.00);
+
+
+INSERT INTO OrderItems VALUES (1, 'Book');
+INSERT INTO OrderItems VALUES (1, 'Notebook');
+INSERT INTO OrderItems VALUES (1, 'Pen');
+INSERT INTO OrderItems VALUES (2, 'Eraser');
+INSERT INTO OrderItems VALUES (2, 'Pencil');
+INSERT INTO OrderItems VALUES (3, 'Diary');
+
+
+SELECT
+o.OrderID,
+o.CustomerName,
+o.OrderDate,
+GROUP_CONCAT(oi.ItemName ORDER BY oi.ItemName SEPARATOR ',') AS Items,
+o.TotalAmount
+FROM
+Orders o
+JOIN
+OrderItems oi ON o.OrderID = oi.OrderID
+GROUP BY
+o.OrderID, o.CustomerName, o.OrderDate, o.TotalAmount;
+
+14. i)
+
+CREATE TABLE Customer (
+CustomerID INT PRIMARY KEY,
+CustomerName VARCHAR(50)
+);
+
+CREATE TABLE Products (
+ProductID INT PRIMARY KEY,
+ProductName VARCHAR(50),
+Category VARCHAR(50),
+Price DECIMAL(10,2)
+);
+
+CREATE TABLE Orders (
+OrderID INT PRIMARY KEY,
+CustomerID INT,
+ProductID INT,
+Quantity INT,
+Amount DECIMAL(10,2),
+FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+
+INSERT INTO Customer VALUES
+(1, 'Alice Smith'),
+(2, 'Bob Johnson'),
+(3, 'Charlie Brown'),
+(4, 'Diana Lee'),
+(5, 'Eve Williams');
+
+INSERT INTO Products VALUES
+(1, 'Laptop', 'Electronics', 1200.00),
+(2, 'Mouse', 'Electronics', 20.00),
+(3, 'Keyboard', 'Electronics', 50.00),
+(4, 'Shirt', 'Apparel', 75.00),
+(5, 'Cushion', 'Home Goods', 50.00);
+
+INSERT INTO Orders VALUES
+(101, 1, 1, 1, 1200.00),
+(102, 1, 2, 2, 40.00),
+(103, 1, 3, 1, 50.00),
+(104, 2, 2, 1, 20.00),
+(105, 3, 1, 1, 1200.00),
+(106, 3, 2, 1, 20.00),
+(107, 3, 3, 1, 50.00),
+(108, 2, 2, 1, 20.00),
+(109, 1, 2, 1, 20.00);
+
+SELECT
+c.CustomerName,
+SUM(o.Amount) AS TotalAmountSpent
+FROM
+Customer c
+JOIN
+Orders o ON c.CustomerID = o.CustomerID
+GROUP BY
+c.CustomerName;
+
+SELECT p.ProductName,
+COUNT(*) AS TotalUnitsSold
+FROM Orders o
+JOIN Products p ON o.ProductID = p.ProductID
+GROUP BY p.ProductName
+ORDER BY TotalUnitsSold DESC
+LIMIT 1;
+
+SELECT c.CustomerName FROM Customer c
+LEFT JOIN
+Orders o ON c.CustomerID = o.CustomerID
+WHERE o.OrderID IS NULL;
+
+SELECT Category,
+MAX(Price) AS MostExpensivePrice
+FROM Products GROUP BY Category;
 
 
 
 
+Question 16 i)
+
+
+CREATE TABLE Admissions (
+    admission_id INT PRIMARY KEY,
+    patient_name VARCHAR(50),
+    department VARCHAR(50),
+    stay_days INT
+);
+
+
+INSERT INTO Admissions VALUES
+(1, 'Alice Smith', 'Cardiology', 5),
+(2, 'Alice Smith', 'Neurology', 4),
+(3, 'Bob Johnson', 'Cardiology', 3),
+(4, 'Bob Johnson', 'Neurology', 2),
+(5, 'Charlie Rose', 'Orthopedics', 7),
+(6, 'Diana King', 'Cardiology', 6),
+(7, 'Evan Lee', 'Neurology', 2);
+
+
+SELECT patient_name FROM Admissions
+WHERE department = 'Cardiology'
+INTERSECT
+SELECT patient_name FROM Admissions
+WHERE department = 'Neurology';
+
+
+SELECT COUNT(*) AS TotalAdmissions FROM Admissions;
+
+SELECT
+    MAX(stay_days) AS LongestStayDays,
+    MIN(stay_days) AS ShortestStayDays
+FROM Admissions;
+
+
+Question 17  i)
+
+
+CREATE TABLE EmployeePayroll (
+    EmployeeID INT PRIMARY KEY,
+    EmployeeName VARCHAR(50),
+    BaseSalary DECIMAL(10,2),
+    Bonus DECIMAL(10,2)
+);
+
+
+INSERT INTO EmployeePayroll VALUES
+(101, 'John Doe', 50000.00, 5000.00),
+(102, 'Emily Clark', 60000.00, 7000.00),
+(103, 'Michael Lee', 55000.00, 4000.00),
+(104, 'Sarah Adams', 48000.00, 6000.00),
+(105, 'David Wilson', 62000.00, 8000.00);
+
+
+CREATE VIEW PayrollSummary AS
+SELECT
+    EmployeeID,
+    EmployeeName,
+    BaseSalary,
+    Bonus,
+    (BaseSalary + Bonus) AS TotalSalary
+FROM EmployeePayroll;
+
+
+SELECT * FROM PayrollSummary;
+
+
+Question 17 ii)
+
+
+CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    TotalAmount DECIMAL(10,2)
+);
+
+
+INSERT INTO Orders VALUES
+(201, 1001, 500.00),
+(202, 1002, 1200.50),
+(203, 1003, 750.75),
+(204, 1004, 980.00),
+(205, 1005, 1500.00);
+
+
+CREATE VIEW OrderSummary AS
+SELECT
+    OrderID,
+    CustomerID,
+    TotalAmount,
+    (TotalAmount * 0.10) AS TaxAmount
+FROM Orders;
+
+
+SELECT * FROM OrderSummary;
+
+Question 19  i)
+
+
+CREATE TABLE Employees (
+    emp_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+
+INSERT INTO Employees VALUES
+(1, 'John', 'Doe', 'john.doe@company.com'),
+(2, 'Jane', 'Smith', 'jane.smith@company.com'),
+(3, 'Peter', 'Jones', 'peter.jones@company.com'),
+(4, 'Mary', 'Brown', 'mary.brown@company.com');
+
+
+SELECT
+    emp_id,
+    first_name,
+    last_name,
+    email,
+    SUBSTRING(email, LOCATE('@', email) + 1) AS domain_name
+FROM Employees;
 
 
 
+Question 19 ii)
 
-
-
-
-
-
-
-
-
-
-
-
-
-17)i)
-import java.util.Scanner;
-
-class Bike {
-private String brand;
-private String model;
-private int year;
-private float mileage;
-private float rentalPrice;
-
-// Constructor
-public Bike(String brand, String model, int year, float mileage, float rentalPrice) {
-if (year <= 1885 || mileage < 0 || rentalPrice <= 0) {
-throw new IllegalArgumentException("Invalid input");
-}
-this.brand = brand;
-this.model = model;
-this.year = year;
-this.mileage = mileage;
-this.rentalPrice = rentalPrice;
-}
-
-// Method to calculate rental cost for a given number of days
-public float calculateRentalCost(int days) {
-return rentalPrice * days;
-}
-
-// Method to display bike details and rental cost
-public void displayDetails(int days) {
-System.out.printf("Brand: %s, Model: %s, Year: %d, Mileage: %.2f km/l, Rental Price: ₹%.2f%n",
-brand, model, year, mileage, rentalPrice);
-System.out.printf("Rental Cost for %d days: ₹%.2f%n", days, calculateRentalCost(days));
-}
-}
-
-public class BikeRentalSystem {
-public static void main(String[] args) {
-Scanner sc = new Scanner(System.in);
-try {
-int N = Integer.parseInt(sc.nextLine());
-if (N <= 0) {
-throw new IllegalArgumentException("Invalid input");
-}
-
-Bike[] bikes = new Bike[N];
-for (int i = 0; i < N; i++) {
-String[] input = sc.nextLine().split(" ");
-if (input.length != 5) {
-throw new IllegalArgumentException("Invalid input");
-}
-String brand = input[0];
-String model = input[1];
-int year = Integer.parseInt(input[2]);
-float mileage = Float.parseFloat(input[3]);
-float rentalPrice = Float.parseFloat(input[4]);
-
-bikes[i] = new Bike(brand, model, year, mileage, rentalPrice);
-}
-
-System.out.println("Bike Details:");
-for (Bike bike : bikes) {
-bike.displayDetails(5);
-}
-} catch (IllegalArgumentException e) {
-System.out.println(e.getMessage());
-} catch (Exception e) {
-System.out.println("Invalid input");
-}
-}
-}
-17) ii)
-import java.util.Scanner;
-
-class ShoppingCart {
-// Method to handle integer price
-double calculateTotal(int price) {
-return price;
-}
-
-// Method to handle double price
-double calculateTotal(double price) {
-return price;
-}
-
-// Method to handle string price
-double calculateTotal(String price) {
-try {
-return Double.parseDouble(price);
-} catch (NumberFormatException e) {
-throw new IllegalArgumentException("Invalid input");
-}
-}
-}
-
-public class ShoppingCartTotal {
-public static void main(String[] args) {
-Scanner sc = new Scanner(System.in);
-ShoppingCart cart = new ShoppingCart();
-double total = 0;
-
-try {
-for (int i = 0; i < 3; i++) {
-String input = sc.nextLine();
-if (input.matches("\\d+")) { // Integer format
-total += cart.calculateTotal(Integer.parseInt(input));
-} else if (input.matches("\\d+\\.\\d+")) { // Floating-point format
-total += cart.calculateTotal(Double.parseDouble(input));
-} else { // String format
-total += cart.calculateTotal(input);
-}
-}
-System.out.printf("Total Cost: %.2f%n", total);
-} catch (IllegalArgumentException e) {
-System.out.println("Invalid input");
-}
-}
-}
-19) i)
-import java.util.Scanner;
-
-abstract class Vehicle {
-abstract double fuelEfficiency(double fuel, double distance);
-}
-
-class Car extends Vehicle {
-@Override
-double fuelEfficiency(double fuel, double distance) {
-return distance / fuel;
-}
-}
-
-class Bike extends Vehicle {
-@Override
-double fuelEfficiency(double fuel, double distance) {
-return distance / fuel;
-}
-}
-
-public class VehicleManagementSystem {
-public static void main(String[] args) {
-Scanner sc = new Scanner(System.in);
-
-String vehicleType = sc.nextLine();
-double fuel = sc.nextDouble();
-double distance = sc.nextDouble();
-
-if (fuel <= 0 || distance <= 0) {
-System.out.println("Invalid Input");
-return;
-}
-
-Vehicle vehicle;
-
-switch (vehicleType) {
-case "Car":
-vehicle = new Car();
-break;
-case "Bike":
-vehicle = new Bike();
-break;
-default:
-System.out.println("Invalid Vehicle Type");
-return;
-}
-
-double efficiency = vehicle.fuelEfficiency(fuel, distance);
-System.out.printf("%s Fuel Efficiency: %.2f km per liter.%n", vehicleType, efficiency);
-}
-}
-19) ii)
-import java.util.Scanner;
-
-class Product {
-double price;
-String category;
-
-Product(double price, String category) {
-this.price = price;
-this.category = category;
-}
-
-public double calculateFinalPrice() {
-return price; // Base class does not apply any calculation.
-}
-}
-
-class Electronics extends Product {
-Electronics(double price) {
-super(price, "Electronics");
-}
-
-@Override
-public double calculateFinalPrice() {
-if (price > 5000) {
-price -= 500; // Apply ₹500 discount
-}
-price += price * 0.18; // Apply 18% GST
-return price;
-}
-}
-
-class Clothing extends Product {
-Clothing(double price) {
-super(price, "Clothing");
-}
-
-@Override
-public double calculateFinalPrice() {
-if (price > 2000) {
-price -= 100; // Apply ₹100 discount
-}
-price += price * 0.05; // Apply 5% GST
-return price;
-}
-}
-
-class Grocery extends Product {
-Grocery(double price) {
-super(price, "Grocery");
-}
-
-@Override
-public double calculateFinalPrice() {
-if (price >= 5000) {
-price -= price * 0.10; // Apply 10% bulk discount
-}
-return price; // No GST for grocery
-}
-}
-
-public class ShoppingCart {
-public static void main(String[] args) {
-Scanner sc = new Scanner(System.in);
-
-String category = sc.nextLine();
-double price = sc.nextDouble();
-
-if (price <= 0) {
-System.out.println("Invalid Input");
-return;
-}
-
-Product product;
-
-switch (category) {
-case "Electronics":
-product = new Electronics(price);
-break;
-case "Clothing":
-product = new Clothing(price);
-break;
-case "Grocery":
-product = new Grocery(price);
-break;
-default:
-System.out.println("Invalid Product Category");
-return;
-}
-
-double finalPrice = product.calculateFinalPrice();
-System.out.printf("Final Price: ₹%.2f%n", finalPrice);
-}
-}
- 
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    address VARCHAR(100)
+);
+INSERT INTO Customers VALUES
+(1, 'Alice Smith', '123 Main St, Anytown, CA, 91234'),
+(2, 'Bob Johnson', '456 Oak Ave, Springfield, IL, 62704'),
+(3, 'Charlie Brown', '789 Pine Ln, Pleasantville, NY, 10570'),
+(4, 'Diana Lee', '101 Elm Rd, Anytown, CA, 91234');
+SELECT
+    customer_id,
+    name,
+    address,
+    SUBSTRING(
+        address,
+        LOCATE(',', address) + 2,
+      LOCATE(',', address, LOCATE(',', address) + 1) - LOCATE(',', address) - 2
+    ) AS city
+FROM Customers;
