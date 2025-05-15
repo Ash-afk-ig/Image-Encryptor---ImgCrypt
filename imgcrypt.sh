@@ -22,6 +22,7 @@ show_banner() {
     echo "║                                          ║"
     echo "║            ImgCrypt v1.0                 ║"
     echo "║      Secure Image Encryption Tool        ║"
+    echo "║                                -Ashok N  ║"
     echo "║                                          ║"
     echo "╚══════════════════════════════════════════╝"
     echo -e "${NC}"
