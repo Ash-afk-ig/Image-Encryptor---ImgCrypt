@@ -3,18 +3,13 @@
 # imgcrypt - Image Encryption Tool
 # Author: Claude
 # Version: 1.0
-# Description: A tool to encrypt and decrypt image files
-
+#
 set -e
-
-# ANSI color codes for better UI
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# Display banner
+NC='\033[0m' 
 show_banner() {
     clear
     echo -e "${GREEN}"
@@ -22,13 +17,11 @@ show_banner() {
     echo "║                                          ║"
     echo "║            ImgCrypt v1.0                 ║"
     echo "║      Secure Image Encryption Tool        ║"
-    echo "║                                -Ashok N  ║"
+    echo "║                                -Ash      ║"
     echo "║                                          ║"
     echo "╚══════════════════════════════════════════╝"
     echo -e "${NC}"
 }
-
-# Display help information
 show_help() {
     echo -e "${BLUE}Usage:${NC}"
     echo "  imgcrypt [options] <file/directory>"
@@ -51,7 +44,6 @@ show_help() {
     echo ""
 }
 
-# Check if required dependencies are installed
 check_dependencies() {
     local missing_deps=()
     
@@ -74,7 +66,6 @@ check_dependencies() {
     fi
 }
 
-# Check if a file is an image
 is_image() {
     local file="$1"
     local mime_type
@@ -88,32 +79,25 @@ is_image() {
     fi
 }
 
-# Encrypt a single file
 encrypt_file() {
     local input_file="$1"
     local password="$2"
     local backup="$3"
     local output_file="${input_file}.enc"
     
-    # Check if file exists
     if [ ! -f "$input_file" ]; then
         echo -e "${RED}Error: File not found: $input_file${NC}"
         return 1
     fi
-    
-    # Check if file is an image
     if ! is_image "$input_file"; then
         echo -e "${YELLOW}Warning: $input_file does not appear to be an image file. Skipping.${NC}"
         return 1
     fi
     
-    # Create backup if requested
     if [ "$backup" = true ]; then
         cp "$input_file" "${input_file}.bak"
         echo -e "${BLUE}Backup created: ${input_file}.bak${NC}"
     fi
-    
-    # Encrypt the file
     if openssl enc -aes-256-cbc -salt -pbkdf2 -iter 100000 -in "$input_file" -out "$output_file" -k "$password" 2>/dev/null; then
         echo -e "${GREEN}Successfully encrypted: $input_file -> $output_file${NC}"
         return 0
@@ -123,19 +107,14 @@ encrypt_file() {
     fi
 }
 
-# Decrypt a single file
 decrypt_file() {
     local input_file="$1"
     local password="$2"
     local backup="$3"
-    
-    # Check if file exists
     if [ ! -f "$input_file" ]; then
         echo -e "${RED}Error: File not found: $input_file${NC}"
         return 1
     fi
-    
-    # Determine output filename by removing .enc extension
     if [[ "$input_file" == *.enc ]]; then
         local output_file="${input_file%.enc}"
     else
@@ -143,17 +122,14 @@ decrypt_file() {
         echo -e "${YELLOW}Warning: Input file does not have .enc extension. Output will be: $output_file${NC}"
     fi
     
-    # Create backup if requested
     if [ "$backup" = true ]; then
         cp "$input_file" "${input_file}.bak"
         echo -e "${BLUE}Backup created: ${input_file}.bak${NC}"
     fi
     
-    # Decrypt the file
     if openssl enc -d -aes-256-cbc -salt -pbkdf2 -iter 100000 -in "$input_file" -out "$output_file" -k "$password" 2>/dev/null; then
         echo -e "${GREEN}Successfully decrypted: $input_file -> $output_file${NC}"
         
-        # Check if decrypted file is a valid image
         if ! is_image "$output_file"; then
             echo -e "${YELLOW}Warning: Decrypted file does not appear to be an image. Password may be incorrect.${NC}"
         fi
@@ -164,8 +140,6 @@ decrypt_file() {
         return 1
     fi
 }
-
-# Process a directory recursively
 process_directory() {
     local directory="$1"
     local operation="$2"
@@ -175,13 +149,11 @@ process_directory() {
     local files_processed=0
     local files_succeeded=0
     
-    # Check if directory exists
     if [ ! -d "$directory" ]; then
         echo -e "${RED}Error: Directory not found: $directory${NC}"
         return 1
     fi
     
-    # Process files in current directory
     local file_list
     if [ "$operation" = "encrypt" ]; then
         file_list=$(find "$directory" -maxdepth 1 -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.gif" -o -iname "*.tiff" -o -iname "*.webp" \) 2>/dev/null)
@@ -199,7 +171,6 @@ process_directory() {
         fi
     done
     
-    # Process subdirectories if recursive is enabled
     if [ "$recursive" = true ]; then
         local subdirs
         subdirs=$(find "$directory" -mindepth 1 -maxdepth 1 -type d 2>/dev/null)
@@ -221,19 +192,14 @@ process_directory() {
     return $((files_succeeded << 8 | files_processed))
 }
 
-# Main function
 main() {
-    # Initial variables
     local operation=""
     local recursive=false
     local backup=false
     local password=""
     local target=""
     
-    # Check dependencies
     check_dependencies
-    
-    # Parse command line arguments
     while [ $# -gt 0 ]; do
         case "$1" in
             -e|--encrypt)
@@ -278,10 +244,7 @@ main() {
         esac
     done
     
-    # Show banner
     show_banner
-    
-    # Validate arguments
     if [ -z "$operation" ]; then
         echo -e "${RED}Error: No operation specified. Use -e to encrypt or -d to decrypt.${NC}"
         show_help
@@ -294,7 +257,6 @@ main() {
         exit 1
     fi
     
-    # Get password if not provided
     if [ -z "$password" ]; then
         echo -e "${YELLOW}Enter password for ${operation}ion:${NC}"
         read -s password
@@ -315,18 +277,17 @@ main() {
         fi
     fi
     
-    # Process the target
     local files_processed=0
     local files_succeeded=0
     
     if [ -d "$target" ]; then
-        # Target is a directory
+       
         process_directory "$target" "$operation" "$password" "$recursive" "$backup"
         exit_code=$?
         files_succeeded=$((exit_code >> 8))
         files_processed=$((exit_code & 255))
     elif [ -f "$target" ]; then
-        # Target is a file
+    
         files_processed=1
         
         if [ "$operation" = "encrypt" ]; then
@@ -339,7 +300,6 @@ main() {
         exit 1
     fi
     
-    # Summary
     echo ""
     echo -e "${BLUE}Operation Summary:${NC}"
     echo "  Files processed: $files_processed"
