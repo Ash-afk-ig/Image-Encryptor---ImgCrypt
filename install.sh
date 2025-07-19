@@ -1,17 +1,14 @@
 #!/bin/bash
 
 # Installation script for imgcrypt
-# Author: Ashok N
+# Author: Ash
 # Version: 1.0
-
-# ANSI color codes for better UI
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Display banner
 echo -e "${GREEN}"
 echo "╔══════════════════════════════════════════╗"
 echo "║                                          ║"
@@ -22,19 +19,16 @@ echo "║                                          ║"
 echo "╚══════════════════════════════════════════╝"
 echo -e "${NC}"
 
-# Check if script is running as root
 if [ "$EUID" -ne 0 ]; then
   echo -e "${YELLOW}Running installation without root privileges...${NC}"
   echo -e "${YELLOW}The script will be installed in the local bin directory.${NC}"
   INSTALL_DIR="$HOME/.local/bin"
-  # Create directory if it doesn't exist
   mkdir -p "$INSTALL_DIR"
 else
   echo -e "${GREEN}Running installation with root privileges...${NC}"
   INSTALL_DIR="/usr/local/bin"
 fi
 
-# Check if the INSTALL_DIR is in PATH
 if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
   echo -e "${YELLOW}Warning: $INSTALL_DIR is not in your PATH.${NC}"
   echo -e "You may need to add it by running:"
@@ -42,7 +36,6 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
   echo -e "    source ~/.bashrc"
 fi
 
-# Check if required dependencies are installed
 echo -e "${BLUE}Checking dependencies...${NC}"
 missing_deps=()
 
@@ -88,24 +81,18 @@ fi
 
 echo -e "${GREEN}All dependencies are installed.${NC}"
 
-# Get script directory
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
-# Check if imgcrypt script exists
 if [ ! -f "$SCRIPT_DIR/imgcrypt.sh" ]; then
     echo -e "${RED}Error: imgcrypt.sh not found in the current directory.${NC}"
     echo "Please make sure the imgcrypt.sh script is in the same directory as this installer."
     exit 1
 fi
 
-# Copy the script to the installation directory
 echo -e "${BLUE}Installing imgcrypt to $INSTALL_DIR...${NC}"
 cp "$SCRIPT_DIR/imgcrypt.sh" "$INSTALL_DIR/imgcrypt"
 
-# Make the script executable
 chmod +x "$INSTALL_DIR/imgcrypt"
-
-# Check if installation was successful
 if [ -f "$INSTALL_DIR/imgcrypt" ] && [ -x "$INSTALL_DIR/imgcrypt" ]; then
     echo -e "${GREEN}Installation successful!${NC}"
     echo -e "${BLUE}You can now use imgcrypt by typing:${NC}"
@@ -120,13 +107,11 @@ else
     exit 1
 fi
 
-# Create manual page
 if [ "$EUID" -eq 0 ] && command -v gzip &> /dev/null; then
     echo -e "${BLUE}Creating manual page...${NC}"
     MANUAL_DIR="/usr/local/share/man/man1"
     mkdir -p "$MANUAL_DIR"
-    
-    # Create man page content
+
     cat > "$MANUAL_DIR/imgcrypt.1" << 'EOL'
 .TH IMGCRYPT 1 "May 2025" "imgcrypt 1.0" "User Commands"
 .SH NAME
@@ -173,15 +158,12 @@ Decrypt all encrypted images in a directory:
 .B imgcrypt
 supports the following image formats: jpg, jpeg, png, bmp, gif, tiff, webp
 .SH AUTHOR
-Ashok N
+Ash
 .SH BUGS
 Report bugs to your system administrator.
 EOL
-    
-    # Compress man page
     gzip -f "$MANUAL_DIR/imgcrypt.1"
     
-    # Update man database if mandb command exists
     if command -v mandb &> /dev/null; then
         mandb -q
         echo -e "${GREEN}Manual page installed. You can view it with:${NC}"
