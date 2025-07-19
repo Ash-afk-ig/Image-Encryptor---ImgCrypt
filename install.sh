@@ -17,7 +17,7 @@ echo "╔═══════════════════════�
 echo "║                                          ║"
 echo "║       ImgCrypt Installer v1.0            ║"
 echo "║      Secure Image Encryption Tool        ║"
-echo "║                              -Ashok N    ║"
+echo "║                                  -Ash    ║"
 echo "║                                          ║"
 echo "╚══════════════════════════════════════════╝"
 echo -e "${NC}"
