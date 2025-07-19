@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # imgcrypt - Image Encryption Tool
-# Author: Claude
 # Version: 1.0
-#
+
 set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
